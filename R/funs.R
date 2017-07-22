@@ -1,0 +1,125 @@
+
+fipe_referencia <-  function() {
+  httr::POST(
+    "http://veiculos.fipe.org.br/api/veiculos/ConsultarTabelaDeReferencia",
+    httr::add_headers(Referer = "http://veiculos.fipe.org.br/")
+  ) %>%
+  httr::content("text", encoding = "UTF-8") %>%
+  jsonlite::fromJSON() %>%
+  dplyr::mutate(data_ref = lubridate::dmy(paste0("01/", Mes))) %>%
+  dplyr::select(data_ref, cod_ref = Codigo,) %>%
+  dplyr::arrange(desc(data_ref)) %>%
+  tibble::as_tibble()
+}
+
+#fipe_referencia()
+
+fipe_marca <- function(cod_ref = NULL) {
+  if(is.null(cod_ref)) {
+    x <- fipe_referencia()
+    cod_ref <- x$cod_ref[1]
+  }
+
+  httr::POST(
+    "http://veiculos.fipe.org.br/api/veiculos/ConsultarMarcas",
+    httr::add_headers(Referer = "http://veiculos.fipe.org.br/"),
+    body = list(
+      codigoTabelaReferencia = cod_ref,
+      codigoTipoVeiculo = 1
+    )
+  ) %>%
+  httr::content("text", encoding = "UTF-8") %>%
+  jsonlite::fromJSON() %>%
+  dplyr::rename(marca = Label, cod_marca = Value) %>%
+  dplyr::mutate(cod_marca = as.integer(cod_marca)) %>%
+  dplyr::arrange(marca) %>%
+  tibble::as_tibble()
+}
+
+#fipe_marca()
+
+fipe_modelo <- function(cod_ref, cod_marca) {
+  httr::POST(
+    "http://veiculos.fipe.org.br/api/veiculos/ConsultarModelos",
+    httr::add_headers(Referer = "http://veiculos.fipe.org.br/"),
+    body = list(
+      codigoTipoVeiculo = 1,
+      codigoTabelaReferencia = cod_ref,
+      codigoMarca = cod_marca
+    )
+  ) %>%
+  httr::content("text", encoding = "UTF-8") %>%
+  jsonlite::fromJSON() %>%
+  '[['(1) %>%
+  tibble::rownames_to_column() %>%
+  dplyr::select(modelo = Label, cod_modelo = Value) %>%
+  dplyr::arrange(modelo) %>%
+  tibble::as_tibble()
+}
+
+# fipe_modelo(215, 56)
+
+fipe_ano <- function(cod_ref, cod_marca, cod_modelo) {
+  httr::POST(
+    "http://veiculos.fipe.org.br/api/veiculos/ConsultarAnoModelo",
+    httr::add_headers(Referer = "http://veiculos.fipe.org.br/"),
+    body = list(
+      codigoTipoVeiculo = 1,
+      codigoTabelaReferencia = cod_ref,
+      codigoModelo = cod_modelo,
+      codigoMarca = cod_marca
+    )
+  ) %>%
+  httr::content("text", encoding = "UTF-8") %>%
+  jsonlite::fromJSON() %>%
+  tidyr::separate(Label, c("ano", "combustivel")) %>%
+  dplyr::mutate(
+    ano = ifelse(ano == "32000", lubridate::year(Sys.Date()), as.integer(ano))
+  ) %>%
+  dplyr::select(ano, cod_ano = Value) %>%
+  tibble::as_tibble()
+}
+
+# fipe_ano(215, 56, 7712)
+
+fipe <- function(cod_ref, cod_marca, cod_modelo, cod_ano) {
+
+  ano <- as.integer(stringr::str_split(cod_ano, "-", simplify = TRUE)[1, 1])
+  combustivel <- as.integer(stringr::str_split(cod_ano, "-", simplify = TRUE)[1, 2])
+
+  httr::POST(
+    "http://veiculos.fipe.org.br/api/veiculos/ConsultarValorComTodosParametros",
+    encode="form",
+    httr::add_headers(Referer = "http://veiculos.fipe.org.br/"),
+    body = list(
+      codigoTabelaReferencia = cod_ref,
+      codigoMarca = cod_marca,
+      codigoModelo = cod_modelo,
+      codigoTipoVeiculo = 1,
+      anoModelo = ano,
+      codigoTipoCombustivel = combustivel,
+      tipoVeiculo = "carro",
+      modeloCodigoExterno = "",
+      tipoConsulta = "tradicional"
+    )
+  ) %>%
+  httr::content() %>%
+  tibble::as_tibble() %>%
+  dplyr::mutate(
+    MesReferencia = lubridate::dmy(paste0("01 ", MesReferencia)),
+    Modelo = ifelse(ano == 32000, paste0(Modelo, " - 0 km"), Modelo),
+    AnoModelo = ifelse(AnoModelo == 32000, lubridate::year(Sys.Date()), as.integer(AnoModelo)), # sera que eh a melhor alternativa?
+    Valor = readr::parse_number(Valor, locale = readr::locale(decimal_mark = ","))
+  ) %>%
+  dplyr::select(
+    cod_fipe = CodigoFipe,
+    ref = MesReferencia,
+    marca = Marca,
+    modelo = Modelo,
+    ano = AnoModelo,
+    combustivel = Combustivel,
+    valor = Valor
+  )
+}
+
+#fipe(215, 56, 7712, "2018-1")
