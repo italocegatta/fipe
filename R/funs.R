@@ -95,7 +95,7 @@ fipe_ano <- function(cod_ref, cod_marca, cod_modelo) {
   jsonlite::fromJSON() %>%
   tidyr::separate(Label, c("ano", "combustivel")) %>%
   dplyr::mutate(
-    ano = ifelse(ano == "32000", lubridate::year(Sys.Date()), as.integer(ano))
+    ano = ifelse(ano == "32000", "0 km", as.character(ano))
   ) %>%
   dplyr::select(ano, cod_ano = Value) %>%
   tibble::as_tibble()
@@ -115,7 +115,6 @@ fipe <- function(cod_ref, cod_marca, cod_modelo, cod_ano) {
 
   httr::POST(
     "http://veiculos.fipe.org.br/api/veiculos/ConsultarValorComTodosParametros",
-    encode="form",
     httr::add_headers(Referer = "http://veiculos.fipe.org.br/"),
     body = list(
       codigoTabelaReferencia = cod_ref,
@@ -133,7 +132,7 @@ fipe <- function(cod_ref, cod_marca, cod_modelo, cod_ano) {
   tibble::as_tibble() %>%
   dplyr::mutate(
     MesReferencia = lubridate::dmy(paste0("01 ", MesReferencia)),
-    AnoModelo = ifelse(AnoModelo == 32000, "0 km", as.integer(AnoModelo)), # sera que eh a melhor alternativa?
+    AnoModelo = ifelse(AnoModelo == 32000, "0 km", as.character(AnoModelo)),
     Valor = readr::parse_number(Valor, locale = readr::locale(decimal_mark = ","))
   ) %>%
   dplyr::select(
