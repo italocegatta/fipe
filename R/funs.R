@@ -133,8 +133,7 @@ fipe <- function(cod_ref, cod_marca, cod_modelo, cod_ano) {
   tibble::as_tibble() %>%
   dplyr::mutate(
     MesReferencia = lubridate::dmy(paste0("01 ", MesReferencia)),
-    Modelo = ifelse(ano == 32000, paste0(Modelo, " - 0 km"), Modelo),
-    AnoModelo = ifelse(AnoModelo == 32000, lubridate::year(Sys.Date()), as.integer(AnoModelo)), # sera que eh a melhor alternativa?
+    AnoModelo = ifelse(AnoModelo == 32000, "0 km", as.integer(AnoModelo)), # sera que eh a melhor alternativa?
     Valor = readr::parse_number(Valor, locale = readr::locale(decimal_mark = ","))
   ) %>%
   dplyr::select(
