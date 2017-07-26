@@ -1,0 +1,18 @@
+---
+title: "Vignette Title"
+author: "Vignette Author"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+O pacote `fipe` foi desenvolvido para facilitar a consulta dos preços dos veículos vendidos no Brasil levantados pela [FIPE](http://www.fipe.org.br/). Infelizmente a implementação é bem rústica e exige um tempo considerável para consultar a os valores pois o site não possui um API dedicado. 
+
+A utilização do pacote é muito semelhante à consulta que podemos fazer no site oficial, e por isso exige um roteiro sistemático. É preciso preencher 4 campos para que a consulta seja efetiva, sendo eles: mês de referência, marca, modelo e ano do veículo de interesse. Note que estes são os mesmos passos utilizados no site oficial da FIPE, o pacote apenas automatiza o acesso e organiza os dados de forma estruturada.
+
+O pacote considera em suas consultas apenas os códigos que a FIPE utliza internamente para referenciar suas veriáveis. Essa abordagem minimiza os erros relacionados a grafia dos nomes.
+
+O primeiro passo é definir o mês de referência que se deseja consultar os valores.

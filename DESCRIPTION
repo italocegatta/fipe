@@ -1,9 +1,21 @@
 Package: fipe
-Title: What the Package Does (one line, title case)
+Title: Consulta de preços da Tabela FIPE
 Version: 0.0.0.9000
-Authors@R: person("First", "Last", email = "first.last@example.com", role = c("aut", "cre"))
+Authors@R: person("Italo", "Cegatta", email = "italocegatta@gmail.com", role = c("aut", "cre"))
 Description: What the package does (one paragraph).
-Depends: R (>= 3.3.3)
-License: What license is it under?
+Depends: R (>= 3.3.0)
+License: MIT
 Encoding: UTF-8
 LazyData: true
+Suggests: knitr,
+    rmarkdown
+VignetteBuilder: knitr
+Imports: httr,
+    jsonlite,
+    dplyr,
+    tibble,
+    lubridate,
+    tidyr,
+    stringr,
+    readr
+RoxygenNote: 6.0.1

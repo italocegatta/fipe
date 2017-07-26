@@ -1,4 +1,9 @@
-
+#' Data de referencia da tabela FIPE
+#'
+#' Consulta o mes de referencia dos precos disponibilizados
+#'
+#' @export
+#'
 fipe_referencia <-  function() {
   httr::POST(
     "http://veiculos.fipe.org.br/api/veiculos/ConsultarTabelaDeReferencia",
@@ -12,8 +17,13 @@ fipe_referencia <-  function() {
   tibble::as_tibble()
 }
 
-#fipe_referencia()
 
+#' Marcas disponiveis na tabela FIPE
+#'
+#' Consulta as marcas disponiveis para um determinado mes de referencia
+#'
+#' @export
+#'
 fipe_marca <- function(cod_ref = NULL) {
   if(is.null(cod_ref)) {
     x <- fipe_referencia()
@@ -36,8 +46,13 @@ fipe_marca <- function(cod_ref = NULL) {
   tibble::as_tibble()
 }
 
-#fipe_marca()
 
+#' Modelos disponiveis na tabela FIPE
+#'
+#' Consulta os modelos disponiveis para um determinado mes de referencia e marca
+#'
+#' @export
+#'
 fipe_modelo <- function(cod_ref, cod_marca) {
   httr::POST(
     "http://veiculos.fipe.org.br/api/veiculos/ConsultarModelos",
@@ -57,8 +72,14 @@ fipe_modelo <- function(cod_ref, cod_marca) {
   tibble::as_tibble()
 }
 
-# fipe_modelo(215, 56)
 
+#' Anos dos modelos disponiveis na tabela FIPE
+#'
+#' Consulta o ano do modelo disponiveis para um determinado mes de referencia,
+#' marca e modelo
+#'
+#' @export
+#'
 fipe_ano <- function(cod_ref, cod_marca, cod_modelo) {
   httr::POST(
     "http://veiculos.fipe.org.br/api/veiculos/ConsultarAnoModelo",
@@ -80,8 +101,13 @@ fipe_ano <- function(cod_ref, cod_marca, cod_modelo) {
   tibble::as_tibble()
 }
 
-# fipe_ano(215, 56, 7712)
-
+#' Consulta o valor do carro na tabela FIPE
+#'
+#' Consulta o valor do carro a partir dos parametros necessarios para a
+#' caracterizacao completa do modelo
+#'
+#' @export
+#'
 fipe <- function(cod_ref, cod_marca, cod_modelo, cod_ano) {
 
   ano <- as.integer(stringr::str_split(cod_ano, "-", simplify = TRUE)[1, 1])
@@ -121,5 +147,3 @@ fipe <- function(cod_ref, cod_marca, cod_modelo, cod_ano) {
     valor = Valor
   )
 }
-
-#fipe(215, 56, 7712, "2018-1")
