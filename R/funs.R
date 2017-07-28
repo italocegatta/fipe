@@ -53,7 +53,12 @@ fipe_marca <- function(cod_ref = NULL) {
 #'
 #' @export
 #'
-fipe_modelo <- function(cod_ref, cod_marca) {
+fipe_modelo <- function(cod_ref = NULL, cod_marca) {
+  if(is.null(cod_ref)) {
+    x <- fipe_referencia()
+    cod_ref <- x$cod_ref[1]
+  }
+
   httr::POST(
     "http://veiculos.fipe.org.br/api/veiculos/ConsultarModelos",
     httr::add_headers(Referer = "http://veiculos.fipe.org.br/"),
@@ -80,7 +85,12 @@ fipe_modelo <- function(cod_ref, cod_marca) {
 #'
 #' @export
 #'
-fipe_ano <- function(cod_ref, cod_marca, cod_modelo) {
+fipe_ano <- function(cod_ref = NULL, cod_marca, cod_modelo) {
+  if(is.null(cod_ref)) {
+    x <- fipe_referencia()
+    cod_ref <- x$cod_ref[1]
+  }
+
   httr::POST(
     "http://veiculos.fipe.org.br/api/veiculos/ConsultarAnoModelo",
     httr::add_headers(Referer = "http://veiculos.fipe.org.br/"),
@@ -108,9 +118,13 @@ fipe_ano <- function(cod_ref, cod_marca, cod_modelo) {
 #'
 #' @export
 #'
-fipe <- function(cod_ref, cod_marca, cod_modelo, cod_ano) {
+fipe <- function(cod_ref = NULL, cod_marca, cod_modelo, cod_ano) {
+  if(is.null(cod_ref)) {
+    x <- fipe_referencia()
+    cod_ref <- x$cod_ref[1]
+  }
 
-  ano <- as.integer(stringr::str_split(cod_ano, "-", simplify = TRUE)[1, 1])
+  ano <- as.character(stringr::str_split(cod_ano, "-", simplify = TRUE)[1, 1])
   combustivel <- as.integer(stringr::str_split(cod_ano, "-", simplify = TRUE)[1, 2])
 
   httr::POST(
@@ -133,7 +147,7 @@ fipe <- function(cod_ref, cod_marca, cod_modelo, cod_ano) {
   tibble::as_tibble() %>%
   dplyr::mutate(
     MesReferencia = lubridate::dmy(paste0("01 ", MesReferencia)),
-    AnoModelo = ifelse(AnoModelo == 32000, "0 km", as.integer(AnoModelo)), # sera que eh a melhor alternativa?
+    AnoModelo = ifelse(AnoModelo == 32000, "0 km", as.character(AnoModelo)), # sera que eh a melhor alternativa?
     Valor = readr::parse_number(Valor, locale = readr::locale(decimal_mark = ","))
   ) %>%
   dplyr::select(
