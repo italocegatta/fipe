@@ -110,7 +110,7 @@ fipe_ano <- function(cod_ref, cod_marca, cod_modelo) {
 #'
 fipe <- function(cod_ref, cod_marca, cod_modelo, cod_ano) {
 
-  ano <- as.integer(stringr::str_split(cod_ano, "-", simplify = TRUE)[1, 1])
+  ano <- as.character(stringr::str_split(cod_ano, "-", simplify = TRUE)[1, 1])
   combustivel <- as.integer(stringr::str_split(cod_ano, "-", simplify = TRUE)[1, 2])
 
   httr::POST(
