@@ -16,3 +16,32 @@ A utilização do pacote é muito semelhante à consulta que podemos fazer no si
 O pacote considera em suas consultas apenas os códigos que a FIPE utliza internamente para referenciar suas veriáveis. Essa abordagem minimiza os erros relacionados a grafia dos nomes.
 
 O primeiro passo é definir o mês de referência que se deseja consultar os valores.
+
+
+```{r}
+library(tidyverse)
+library(stringr)
+library(forcats)
+library(fipe)
+```
+
+```{r}
+consulta <- fipe_modelo(cod_ref = 215, cod_marca = 23) %>% 
+  filter(str_detect(modelo, "ONIX")) %>%
+  mutate(tem = map(cod_modelo, ~fipe_ano(215, 23, .x))) %>% 
+  unnest() %>% 
+  mutate(temp = pmap(list(215, 23, cod_modelo, cod_ano), fipe)) %>% 
+  select(temp) %>% 
+  unnest() %>% 
+  mutate(ano = fct_relevel(ano, "0 km", after = Inf))
+
+consulta
+```
+
+```{r}
+ggplot(consulta, aes(valor, modelo, color = ano)) +
+  geom_point(size = 3) +
+  scale_color_viridis_d(direction = -1) +    
+  theme_bw()
+```
+
