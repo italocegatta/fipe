@@ -53,7 +53,12 @@ fipe_marca <- function(cod_ref = NULL) {
 #'
 #' @export
 #'
-fipe_modelo <- function(cod_ref, cod_marca) {
+fipe_modelo <- function(cod_ref = NULL, cod_marca) {
+  if(is.null(cod_ref)) {
+    x <- fipe_referencia()
+    cod_ref <- x$cod_ref[1]
+  }
+
   httr::POST(
     "http://veiculos.fipe.org.br/api/veiculos/ConsultarModelos",
     httr::add_headers(Referer = "http://veiculos.fipe.org.br/"),
@@ -80,7 +85,12 @@ fipe_modelo <- function(cod_ref, cod_marca) {
 #'
 #' @export
 #'
-fipe_ano <- function(cod_ref, cod_marca, cod_modelo) {
+fipe_ano <- function(cod_ref = NULL, cod_marca, cod_modelo) {
+  if(is.null(cod_ref)) {
+    x <- fipe_referencia()
+    cod_ref <- x$cod_ref[1]
+  }
+
   httr::POST(
     "http://veiculos.fipe.org.br/api/veiculos/ConsultarAnoModelo",
     httr::add_headers(Referer = "http://veiculos.fipe.org.br/"),
@@ -108,7 +118,11 @@ fipe_ano <- function(cod_ref, cod_marca, cod_modelo) {
 #'
 #' @export
 #'
-fipe <- function(cod_ref, cod_marca, cod_modelo, cod_ano) {
+fipe <- function(cod_ref = NULL, cod_marca, cod_modelo, cod_ano) {
+  if(is.null(cod_ref)) {
+    x <- fipe_referencia()
+    cod_ref <- x$cod_ref[1]
+  }
 
   ano <- as.character(stringr::str_split(cod_ano, "-", simplify = TRUE)[1, 1])
   combustivel <- as.integer(stringr::str_split(cod_ano, "-", simplify = TRUE)[1, 2])
