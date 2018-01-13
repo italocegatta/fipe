@@ -4,7 +4,7 @@
 \alias{fipe}
 \title{Consulta o valor do carro na tabela FIPE}
 \usage{
-fipe(cod_ref, cod_marca, cod_modelo, cod_ano)
+fipe(cod_ref = NULL, cod_marca, cod_modelo, cod_ano)
 }
 \description{
 Consulta o valor do carro a partir dos parametros necessarios para a

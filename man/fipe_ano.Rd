@@ -4,7 +4,7 @@
 \alias{fipe_ano}
 \title{Anos dos modelos disponiveis na tabela FIPE}
 \usage{
-fipe_ano(cod_ref, cod_marca, cod_modelo)
+fipe_ano(cod_ref = NULL, cod_marca, cod_modelo)
 }
 \description{
 Consulta o ano do modelo disponiveis para um determinado mes de referencia,

@@ -4,7 +4,7 @@
 \alias{fipe_modelo}
 \title{Modelos disponiveis na tabela FIPE}
 \usage{
-fipe_modelo(cod_ref, cod_marca)
+fipe_modelo(cod_ref = NULL, cod_marca)
 }
 \description{
 Consulta os modelos disponiveis para um determinado mes de referencia e marca
