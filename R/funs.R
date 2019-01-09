@@ -1,10 +1,9 @@
-#' Data de referencia da tabela FIPE
-#'
-#' Consulta o mes de referencia dos precos disponibilizados
-#'
-#' @export
-#'
-fipe_referencia <-  function() {
+# consulta o mes de referencia dos precos disponibilizados e retorna o codigo correspondente
+#
+pega_referencia <-  function(data) {
+
+  data_mes <- lubridate::floor_date(confere_data(data), "month")
+
   httr::POST(
     "http://veiculos.fipe.org.br/api/veiculos/ConsultarTabelaDeReferencia",
     httr::add_headers(Referer = "http://veiculos.fipe.org.br/")
@@ -12,25 +11,31 @@ fipe_referencia <-  function() {
   httr::content("text", encoding = "UTF-8") %>%
   jsonlite::fromJSON() %>%
   dplyr::mutate(data_ref = lubridate::dmy(paste0("01/", Mes))) %>%
-  dplyr::select(data_ref, cod_ref = Codigo,) %>%
-  dplyr::arrange(desc(data_ref)) %>%
-  tibble::as_tibble()
+  dplyr::select(data_ref, cod_ref = Codigo) %>%
+  dplyr::filter(data_ref %in% data_mes) %>%
+  dplyr::pull(cod_ref)
 }
 
 
-#' Marcas disponiveis na tabela FIPE
-#'
-#' Consulta as marcas disponiveis para um determinado mes de referencia
-#'
-#' @export
-#'
-fipe_marca <- function(cod_ref = NULL) {
-  if(is.null(cod_ref)) {
-    x <- fipe_referencia()
-    cod_ref <- x$cod_ref[1]
-  }
+# retira caracteres especiais e simflifica a grafica para facilitar o match dos nomes
+#
+limpa_nome <- function(x) {
+  make.names(x) %>%
+    stringr::str_to_lower() %>%
+    snakecase::to_any_case(
+      case = "snake",
+      sep_in = "\\.",
+      transliterations = c("Latin-ASCII"),
+      parsing_option = 4
+    )
+}
 
-  httr::POST(
+
+# consulta as marcas disponiveis para um determinado mes de referencia e retorna o codigo correspondente
+#
+pega_marca <- function(marca = NULL, cod_ref) {
+
+  tab_marca <- httr::POST(
     "http://veiculos.fipe.org.br/api/veiculos/ConsultarMarcas",
     httr::add_headers(Referer = "http://veiculos.fipe.org.br/"),
     body = list(
@@ -40,57 +45,63 @@ fipe_marca <- function(cod_ref = NULL) {
   ) %>%
   httr::content("text", encoding = "UTF-8") %>%
   jsonlite::fromJSON() %>%
-  dplyr::rename(marca = Label, cod_marca = Value) %>%
-  dplyr::mutate(cod_marca = as.integer(cod_marca)) %>%
-  dplyr::arrange(marca) %>%
-  tibble::as_tibble()
+  dplyr::rename(nome_marca = Label, cod_marca = Value) %>%
+  dplyr::mutate(cod_marca = as.integer(cod_marca))
+
+  if (is.null(marca)) {
+
+    tab_marca %>%
+      dplyr::pull(cod_marca) %>%
+      return()
+  } else {
+
+    tab_marca %>%
+      dplyr::filter(limpa_nome(nome_marca) %in% limpa_nome(marca)) %>%
+      dplyr::pull(cod_marca) %>%
+      return()
+  }
 }
 
 
-#' Modelos disponiveis na tabela FIPE
-#'
-#' Consulta os modelos disponiveis para um determinado mes de referencia e marca
-#'
-#' @export
-#'
-fipe_modelo <- function(cod_ref = NULL, cod_marca) {
-  if(is.null(cod_ref)) {
-    x <- fipe_referencia()
-    cod_ref <- x$cod_ref[1]
-  }
+# consulta os modelos disponiveis para um determinado mes de referencia e marca e retorna o codigo correspondente
+#
+pega_modelo <- function(modelo, marca = NULL, cod_ref) {
 
-  httr::POST(
-    "http://veiculos.fipe.org.br/api/veiculos/ConsultarModelos",
-    httr::add_headers(Referer = "http://veiculos.fipe.org.br/"),
-    body = list(
-      codigoTipoVeiculo = 1,
-      codigoTabelaReferencia = cod_ref,
-      codigoMarca = cod_marca
-    )
+  cod_ref_max <- cod_ref[which.max(cod_ref)]
+
+  cod_marca <- pega_marca(marca, cod_ref_max)
+
+  modelos <- paste0(limpa_nome(modelo), collapse = "|")
+
+  purrr::map_dfr(
+    cod_marca,
+    ~httr::POST(
+      "http://veiculos.fipe.org.br/api/veiculos/ConsultarModelos",
+      httr::add_headers(Referer = "http://veiculos.fipe.org.br/"),
+      body = list(
+        codigoTipoVeiculo = 1,
+        codigoTabelaReferencia = cod_ref_max,
+        codigoMarca = .x
+      )
+    ) %>%
+    httr::content("text", encoding = "UTF-8") %>%
+    jsonlite::fromJSON() %>%
+    '[['(1) %>%
+    tibble::rownames_to_column() %>%
+    dplyr::select(nome_modelo = Label, cod_modelo = Value) %>%
+    dplyr::mutate(
+      cod_marca = .x,
+      nome_modelo = limpa_nome(nome_modelo)
+    ) %>%
+    tibble::as_tibble()
   ) %>%
-  httr::content("text", encoding = "UTF-8") %>%
-  jsonlite::fromJSON() %>%
-  '[['(1) %>%
-  tibble::rownames_to_column() %>%
-  dplyr::select(modelo = Label, cod_modelo = Value) %>%
-  dplyr::arrange(modelo) %>%
-  tibble::as_tibble()
+  dplyr::filter(stringr::str_detect(nome_modelo, modelos))
 }
 
 
-#' Anos dos modelos disponiveis na tabela FIPE
-#'
-#' Consulta o ano do modelo disponiveis para um determinado mes de referencia,
-#' marca e modelo
-#'
-#' @export
-#'
-fipe_ano <- function(cod_ref = NULL, cod_marca, cod_modelo) {
-  if(is.null(cod_ref)) {
-    x <- fipe_referencia()
-    cod_ref <- x$cod_ref[1]
-  }
-
+# extrai tabela com os anos disponíveis de cada modelo
+#
+pega_tab_ano <- function(cod_ref, cod_modelo, cod_marca) {
   httr::POST(
     "http://veiculos.fipe.org.br/api/veiculos/ConsultarAnoModelo",
     httr::add_headers(Referer = "http://veiculos.fipe.org.br/"),
@@ -101,28 +112,51 @@ fipe_ano <- function(cod_ref = NULL, cod_marca, cod_modelo) {
       codigoMarca = cod_marca
     )
   ) %>%
-  httr::content("text", encoding = "UTF-8") %>%
-  jsonlite::fromJSON() %>%
-  tidyr::separate(Label, c("ano", "combustivel")) %>%
-  dplyr::mutate(
-    ano = ifelse(ano == "32000", "0 km", as.character(ano))
-  ) %>%
-  dplyr::select(ano, cod_ano = Value) %>%
-  tibble::as_tibble()
+    httr::content("text", encoding = "UTF-8") %>%
+    jsonlite::fromJSON() %>%
+    tidyr::separate(Label, c("ano", "combustivel")) %>%
+    dplyr::mutate(
+      ano = ifelse(ano == "32000", 0L, as.integer(ano))
+    ) %>%
+    dplyr::select(ano, cod_ano = Value) %>%
+    tibble::as_tibble()
 }
 
-#' Consulta o valor do carro na tabela FIPE
-#'
-#' Consulta o valor do carro a partir dos parametros necessarios para a
-#' caracterizacao completa do modelo
-#'
-#' @export
-#'
-fipe <- function(cod_ref = NULL, cod_marca, cod_modelo, cod_ano) {
-  if(is.null(cod_ref)) {
-    x <- fipe_referencia()
-    cod_ref <- x$cod_ref[1]
+
+# consulta o ano do modelo disponivel para um determinado mes de referencia, marca e modelo
+#
+pega_ano <- function(modelo, marca = NULL, ano_filter = NULL, cod_ref) {
+
+  cod_ref_max <- cod_ref[which.max(cod_ref)]
+
+  cod_modelo <- pega_modelo(modelo, marca, cod_ref)
+
+  tab_ano <- cod_modelo %>%
+    dplyr::mutate(
+      cod_ano = purrr::pmap(
+        list(cod_ref_max, cod_modelo, cod_marca),
+        pega_tab_ano
+      )
+    ) %>%
+    tidyr::unnest()
+
+  if (is.null(ano_filter)) {
+
+    return(tab_ano)
+
+  } else {
+
+    tab_ano %>%
+      dplyr::filter(ano %in% ano_filter) %>%
+      return()
+
   }
+}
+
+
+# consulta o valor do modelo
+#
+pega_valor <- function(cod_ref, cod_marca, cod_modelo, cod_ano) {
 
   ano <- as.character(stringr::str_split(cod_ano, "-", simplify = TRUE)[1, 1])
   combustivel <- as.integer(stringr::str_split(cod_ano, "-", simplify = TRUE)[1, 2])
@@ -142,20 +176,49 @@ fipe <- function(cod_ref = NULL, cod_marca, cod_modelo, cod_ano) {
       tipoConsulta = "tradicional"
     )
   ) %>%
-  httr::content() %>%
-  tibble::as_tibble() %>%
-  dplyr::mutate(
-    MesReferencia = lubridate::dmy(paste0("01 ", MesReferencia)),
-    AnoModelo = ifelse(AnoModelo == 32000, "0 km", as.character(AnoModelo)),
-    Valor = readr::parse_number(Valor, locale = readr::locale(decimal_mark = ","))
-  ) %>%
-  dplyr::select(
-    cod_fipe = CodigoFipe,
-    ref = MesReferencia,
-    marca = Marca,
-    modelo = Modelo,
-    ano = AnoModelo,
-    combustivel = Combustivel,
-    valor = Valor
-  )
+    httr::content() %>%
+    tibble::as_tibble() %>%
+    dplyr::mutate(
+      MesReferencia = lubridate::dmy(paste0("01 ", MesReferencia)),
+      AnoModelo = ifelse(AnoModelo == "32000", 0L, as.integer(AnoModelo)),
+      Valor = readr::parse_number(Valor, locale = readr::locale(decimal_mark = ","))
+    ) %>%
+    dplyr::select(
+      cod_fipe = CodigoFipe,
+      data_referencia = MesReferencia,
+      marca = Marca,
+      modelo = Modelo,
+      ano = AnoModelo,
+      combustivel = Combustivel,
+      valor = Valor
+    )
+}
+
+confere_data <- function(x) {
+
+  if (!lubridate::is.Date(x)) {
+
+    test1 <- tryCatch(lubridate::dmy(x), warning=function(w) w)
+
+    if (!any((class(test1) == "warning") == TRUE)) {
+
+      return(test1)
+
+    } else {
+
+      test2 <- tryCatch(lubridate::ymd(x), warning=function(w) w)
+
+      if (lubridate::is.Date(test2)) {
+
+        return(test2)
+
+      } else {
+
+        stop("All formats failed to parse to date. No formats found.")
+
+      }
+    }
+  }
+
+  x
 }

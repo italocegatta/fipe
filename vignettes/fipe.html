@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<meta name="author" content="Vignette Author" />
+
+<meta name="date" content="2019-01-06" />
+
+<title>Vignette Title</title>
+
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' || rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+<link href="data:text/css;charset=utf-8,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23header%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%20code%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" rel="stylesheet" type="text/css" />
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Vignette Title</h1>
+<h4 class="author"><em>Vignette Author</em></h4>
+<h4 class="date"><em>2019-01-06</em></h4>
+
+
+
+<p>O pacote <code>fipe</code> foi desenvolvido para facilitar a consulta dos preços dos veículos vendidos no Brasil levantados pela <a href="http://www.fipe.org.br/">FIPE</a>. Infelizmente a implementação é bem rústica e exige um tempo considerável para consultar a os valores pois o site não possui um API dedicado.</p>
+<p>A utilização do pacote é muito semelhante à consulta que podemos fazer no site oficial, e por isso exige um roteiro sistemático. É preciso preencher 4 campos para que a consulta seja efetiva, sendo eles: mês de referência, marca, modelo e ano do veículo de interesse. Note que estes são os mesmos passos utilizados no site oficial da FIPE, o pacote apenas automatiza o acesso e organiza os dados de forma estruturada.</p>
+<p>O pacote considera em suas consultas apenas os códigos que a FIPE utliza internamente para referenciar suas veriáveis. Essa abordagem minimiza os erros relacionados a grafia dos nomes.</p>
+<p>O primeiro passo é definir o mês de referência que se deseja consultar os valores.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tidyverse)</code></pre></div>
+<pre><code>## -- Attaching packages -------------------------------------------------------- tidyverse 1.2.1 --</code></pre>
+<pre><code>## v ggplot2 3.1.0     v purrr   0.2.5
+## v tibble  1.4.2     v dplyr   0.7.8
+## v tidyr   0.8.2     v stringr 1.3.1
+## v readr   1.3.1     v forcats 0.3.0</code></pre>
+<pre><code>## Warning: package 'readr' was built under R version 3.5.2</code></pre>
+<pre><code>## -- Conflicts ----------------------------------------------------------- tidyverse_conflicts() --
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(stringr)
+<span class="kw">library</span>(forcats)
+<span class="kw">library</span>(fipe)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">consulta &lt;-<span class="st"> </span><span class="kw">fipe_modelo</span>(<span class="dt">cod_ref =</span> <span class="dv">215</span>, <span class="dt">cod_marca =</span> <span class="dv">23</span>) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">filter</span>(<span class="kw">str_detect</span>(modelo, <span class="st">&quot;ONIX&quot;</span>)) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">tem =</span> <span class="kw">map</span>(cod_modelo, <span class="op">~</span><span class="kw">fipe_ano</span>(<span class="dv">215</span>, <span class="dv">23</span>, .x))) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">unnest</span>() <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">temp =</span> <span class="kw">pmap</span>(<span class="kw">list</span>(<span class="dv">215</span>, <span class="dv">23</span>, cod_modelo, cod_ano), fipe)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">select</span>(temp) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">unnest</span>() <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">ano =</span> <span class="kw">fct_relevel</span>(ano, <span class="st">&quot;0 km&quot;</span>, <span class="dt">after =</span> <span class="ot">Inf</span>))
+
+consulta</code></pre></div>
+<pre><code>## # A tibble: 53 x 7
+##    cod_fipe ref        marca     modelo             ano   combustivel valor
+##    &lt;chr&gt;    &lt;date&gt;     &lt;chr&gt;     &lt;chr&gt;              &lt;fct&gt; &lt;chr&gt;       &lt;dbl&gt;
+##  1 004451-2 2017-07-01 GM - Che~ ONIX  Lollapalooz~ 2014  Gasolina    33297
+##  2 004471-7 2017-07-01 GM - Che~ ONIX HATCH ACTIV ~ 0 km  Gasolina    63638
+##  3 004471-7 2017-07-01 GM - Che~ ONIX HATCH ACTIV ~ 2018  Gasolina    57725
+##  4 004471-7 2017-07-01 GM - Che~ ONIX HATCH ACTIV ~ 2017  Gasolina    55845
+##  5 004472-5 2017-07-01 GM - Che~ ONIX HATCH ACTIV ~ 0 km  Gasolina    59529
+##  6 004472-5 2017-07-01 GM - Che~ ONIX HATCH ACTIV ~ 2018  Gasolina    54202
+##  7 004472-5 2017-07-01 GM - Che~ ONIX HATCH ACTIV ~ 2017  Gasolina    52451
+##  8 004460-1 2017-07-01 GM - Che~ ONIX HATCH EFFECT~ 0 km  Gasolina    52192
+##  9 004460-1 2017-07-01 GM - Che~ ONIX HATCH EFFECT~ 2018  Gasolina    48278
+## 10 004460-1 2017-07-01 GM - Che~ ONIX HATCH EFFECT~ 2017  Gasolina    46300
+## # ... with 43 more rows</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ggplot</span>(consulta, <span class="kw">aes</span>(valor, modelo, <span class="dt">color =</span> ano)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">size =</span> <span class="dv">3</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">scale_color_viridis_d</span>(<span class="dt">direction =</span> <span class="op">-</span><span class="dv">1</span>) <span class="op">+</span><span class="st">    </span>
+<span class="st">  </span><span class="kw">theme_bw</span>()</code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

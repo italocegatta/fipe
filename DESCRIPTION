@@ -10,12 +10,14 @@ LazyData: true
 Suggests: knitr,
     rmarkdown
 VignetteBuilder: knitr
-Imports: httr,
+Imports: 
+    httr,
     jsonlite,
     dplyr,
     tibble,
     lubridate,
     tidyr,
     stringr,
-    readr
-RoxygenNote: 6.0.1
+    readr,
+    magrittr
+RoxygenNote: 6.1.1
