@@ -20,14 +20,9 @@ pega_referencia <-  function(data) {
 # retira caracteres especiais e simflifica a grafica para facilitar o match dos nomes
 #
 limpa_nome <- function(x) {
-  make.names(x) %>%
+  x %>%
     stringr::str_to_lower() %>%
-    snakecase::to_any_case(
-      case = "snake",
-      sep_in = "\\.",
-      transliterations = c("Latin-ASCII"),
-      parsing_option = 4
-    )
+     iconv(from = 'UTF-8', to = 'ASCII//TRANSLIT')
 }
 
 
@@ -71,7 +66,7 @@ pega_modelo <- function(modelo, marca = NULL, cod_ref) {
 
   cod_marca <- pega_marca(marca, cod_ref_max)
 
-  modelos <- paste0(limpa_nome(modelo), collapse = "|")
+  modelos <- paste0(stringr::str_to_lower(modelo), collapse = "|")
 
   purrr::map_dfr(
     cod_marca,
@@ -102,7 +97,8 @@ pega_modelo <- function(modelo, marca = NULL, cod_ref) {
 # extrai tabela com os anos disponíveis de cada modelo
 #
 pega_tab_ano <- function(cod_ref, cod_modelo, cod_marca) {
-  httr::POST(
+
+  content <- httr::POST(
     "http://veiculos.fipe.org.br/api/veiculos/ConsultarAnoModelo",
     httr::add_headers(Referer = "http://veiculos.fipe.org.br/"),
     body = list(
@@ -112,8 +108,12 @@ pega_tab_ano <- function(cod_ref, cod_modelo, cod_marca) {
       codigoMarca = cod_marca
     )
   ) %>%
-    httr::content("text", encoding = "UTF-8") %>%
-    jsonlite::fromJSON() %>%
+  httr::content("text", encoding = "UTF-8") %>%
+  jsonlite::fromJSON()
+
+  if (content[[2]][[1]] == "nadaencontrado") return(NULL)
+
+  content %>%
     tidyr::separate(Label, c("ano", "combustivel")) %>%
     dplyr::mutate(
       ano = ifelse(ano == "32000", 0L, as.integer(ano))
@@ -127,18 +127,23 @@ pega_tab_ano <- function(cod_ref, cod_modelo, cod_marca) {
 #
 pega_ano <- function(modelo, marca = NULL, ano_filter = NULL, cod_ref) {
 
-  cod_ref_max <- cod_ref[which.max(cod_ref)]
+  #cod_ref_max <- cod_ref[which.max(cod_ref)]
 
   cod_modelo <- pega_modelo(modelo, marca, cod_ref)
 
+  if (nrow(cod_modelo) == 0) stop("Modelo nao encontrado", call. = FALSE)
+
   tab_ano <- cod_modelo %>%
+    tidyr::crossing(., cod_ref_range = range(cod_ref)) %>%
     dplyr::mutate(
       cod_ano = purrr::pmap(
-        list(cod_ref_max, cod_modelo, cod_marca),
+        list(cod_ref_range, cod_modelo, cod_marca),
         pega_tab_ano
       )
     ) %>%
-    tidyr::unnest()
+    dplyr::filter(!purrr::map_lgl(cod_ano, is.null)) %>%
+    tidyr::unnest() %>%
+    dplyr::distinct(cod_modelo, cod_marca, cod_ano, ano)
 
   if (is.null(ano_filter)) {
 
@@ -161,7 +166,7 @@ pega_valor <- function(cod_ref, cod_marca, cod_modelo, cod_ano) {
   ano <- as.character(stringr::str_split(cod_ano, "-", simplify = TRUE)[1, 1])
   combustivel <- as.integer(stringr::str_split(cod_ano, "-", simplify = TRUE)[1, 2])
 
-  httr::POST(
+  content <- httr::POST(
     "http://veiculos.fipe.org.br/api/veiculos/ConsultarValorComTodosParametros",
     httr::add_headers(Referer = "http://veiculos.fipe.org.br/"),
     body = list(
@@ -177,7 +182,11 @@ pega_valor <- function(cod_ref, cod_marca, cod_modelo, cod_ano) {
     )
   ) %>%
     httr::content() %>%
-    tibble::as_tibble() %>%
+    tibble::as_tibble()
+
+  if (content[[2]] == "nadaencontrado") return(NULL)
+
+  content %>%
     dplyr::mutate(
       MesReferencia = lubridate::dmy(paste0("01 ", MesReferencia)),
       AnoModelo = ifelse(AnoModelo == "32000", 0L, as.integer(AnoModelo)),

@@ -1,8 +1,8 @@
 Package: fipe
 Title: Consulta de preços da Tabela FIPE
-Version: 0.0.0.9000
+Version: 0.0.1
 Authors@R: person("Italo", "Cegatta", email = "italocegatta@gmail.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
+Description: O pacote fornece uma forma simplificada de acesso aos dados da Tabela Fipe de Carros.
 Depends: R (>= 3.3.0)
 License: MIT
 Encoding: UTF-8
@@ -19,5 +19,6 @@ Imports:
     tidyr,
     stringr,
     readr,
-    magrittr
+    magrittr,
+    purrr
 RoxygenNote: 6.1.1

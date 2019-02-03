@@ -12,28 +12,28 @@
 #'
 #' @export
 #'
-fipe_carro_p <- function(modelo, marca = NULL, ano = NULL, data_referencia = Sys.Date()) {
+fipe_carro <- function(modelo, marca = NULL, ano = NULL, data_referencia = Sys.Date(), .progress = FALSE) {
 
   cod_ref <- pega_referencia(data_referencia)
 
-  cod_ano <- pega_ano(modelo, marca, ano, cod_ref)
+  base_cod_ano <- pega_ano(modelo, marca, ano, cod_ref)
 
   future::plan(future::multiprocess)
 
-  cod_ano %>%
-    dplyr::select(cod_modelo, cod_marca, cod_ano) %>%
+  base_cod_ano %>%
     tidyr::crossing(., cod_ref) %>%
     dplyr::mutate(
       valor = furrr::future_pmap(
         list(cod_ref, cod_marca, cod_modelo, cod_ano),
-        pega_valor
+        pega_valor, .progress = .progress
       )
     ) %>%
+    dplyr::filter(!purrr::map_lgl(valor, is.null)) %>%
     dplyr::select(valor) %>%
     tidyr::unnest() %>%
     dplyr::mutate(
       ano = ifelse(ano == 0L, "0 km", as.character(ano)),
-      ano = suppressWarnings(forcats::fct_relevel(ano, "0 km"))
+      ano = suppressWarnings(forcats::fct_relevel(ano, "0 km", after = Inf))
     ) %>%
     dplyr::select(
       modelo, marca, ano, data_referencia, valor
