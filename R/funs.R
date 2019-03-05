@@ -1,8 +1,8 @@
 # consulta o mes de referencia dos precos disponibilizados e retorna o codigo correspondente
 #
-pega_referencia <-  function(data) {
+get_reference <-  function(date) {
 
-  data_mes <- lubridate::floor_date(confere_data(data), "month")
+  date_month <- lubridate::floor_date(check_date(date), "month")
 
   httr::POST(
     "http://veiculos.fipe.org.br/api/veiculos/ConsultarTabelaDeReferencia",
@@ -10,16 +10,16 @@ pega_referencia <-  function(data) {
   ) %>%
   httr::content("text", encoding = "UTF-8") %>%
   jsonlite::fromJSON() %>%
-  dplyr::mutate(data_ref = lubridate::dmy(paste0("01/", Mes))) %>%
-  dplyr::select(data_ref, cod_ref = Codigo) %>%
-  dplyr::filter(data_ref %in% data_mes) %>%
-  dplyr::pull(cod_ref)
+  dplyr::mutate(date = lubridate::dmy(paste0("01/", Mes))) %>%
+  dplyr::select(date, reference_code = Codigo) %>%
+  dplyr::filter(date %in% date_month) %>%
+  dplyr::pull(reference_code)
 }
 
 
 # retira caracteres especiais e simflifica a grafica para facilitar o match dos nomes
 #
-limpa_nome <- function(x) {
+clean_name <- function(x) {
   x %>%
     stringr::str_to_lower() %>%
      iconv(from = 'UTF-8', to = 'ASCII//TRANSLIT')
@@ -28,31 +28,32 @@ limpa_nome <- function(x) {
 
 # consulta as marcas disponiveis para um determinado mes de referencia e retorna o codigo correspondente
 #
-pega_marca <- function(marca = NULL, cod_ref) {
+get_make <- function(make = NULL, reference_code) {
 
-  tab_marca <- httr::POST(
+  table_make <- httr::POST(
     "http://veiculos.fipe.org.br/api/veiculos/ConsultarMarcas",
     httr::add_headers(Referer = "http://veiculos.fipe.org.br/"),
     body = list(
-      codigoTabelaReferencia = cod_ref,
+      codigoTabelaReferencia = reference_code,
       codigoTipoVeiculo = 1
     )
   ) %>%
   httr::content("text", encoding = "UTF-8") %>%
   jsonlite::fromJSON() %>%
-  dplyr::rename(nome_marca = Label, cod_marca = Value) %>%
-  dplyr::mutate(cod_marca = as.integer(cod_marca))
+  dplyr::rename(make_name = Label, make_code = Value) %>%
+  dplyr::mutate(make_code = as.integer(make_code))
 
-  if (is.null(marca)) {
+  if (is.null(make)) {
 
-    tab_marca %>%
-      dplyr::pull(cod_marca) %>%
+    table_make %>%
+      dplyr::pull(make_code) %>%
       return()
+
   } else {
 
-    tab_marca %>%
-      dplyr::filter(limpa_nome(nome_marca) %in% limpa_nome(marca)) %>%
-      dplyr::pull(cod_marca) %>%
+    table_make %>%
+      dplyr::filter(clean_name(make_name) %in% clean_name(make)) %>%
+      dplyr::pull(make_code) %>%
       return()
   }
 }
@@ -60,22 +61,22 @@ pega_marca <- function(marca = NULL, cod_ref) {
 
 # consulta os modelos disponiveis para um determinado mes de referencia e marca e retorna o codigo correspondente
 #
-pega_modelo <- function(modelo, marca = NULL, cod_ref) {
+get_model <- function(model, make = NULL, reference_code) {
 
-  cod_ref_max <- cod_ref[which.max(cod_ref)]
+  reference_code_max <- reference_code[which.max(reference_code)]
 
-  cod_marca <- pega_marca(marca, cod_ref_max)
+  make_code <- get_make(make, reference_code_max)
 
-  modelos <- paste0(stringr::str_to_lower(modelo), collapse = "|")
+  models <- paste0(stringr::str_to_lower(model), collapse = "|")
 
   purrr::map_dfr(
-    cod_marca,
+    make_code,
     ~httr::POST(
       "http://veiculos.fipe.org.br/api/veiculos/ConsultarModelos",
       httr::add_headers(Referer = "http://veiculos.fipe.org.br/"),
       body = list(
         codigoTipoVeiculo = 1,
-        codigoTabelaReferencia = cod_ref_max,
+        codigoTabelaReferencia = reference_code_max,
         codigoMarca = .x
       )
     ) %>%
@@ -83,29 +84,29 @@ pega_modelo <- function(modelo, marca = NULL, cod_ref) {
     jsonlite::fromJSON() %>%
     '[['(1) %>%
     tibble::rownames_to_column() %>%
-    dplyr::select(nome_modelo = Label, cod_modelo = Value) %>%
+    dplyr::select(model_name = Label, model_code = Value) %>%
     dplyr::mutate(
-      cod_marca = .x,
-      nome_modelo = limpa_nome(nome_modelo)
+      make_code = .x,
+      model_name = clean_name(model_name)
     ) %>%
     tibble::as_tibble()
   ) %>%
-  dplyr::filter(stringr::str_detect(nome_modelo, modelos))
+  dplyr::filter(stringr::str_detect(model_name, models))
 }
 
 
 # extrai tabela com os anos disponíveis de cada modelo
 #
-pega_tab_ano <- function(cod_ref, cod_modelo, cod_marca) {
+get_table_year <- function(reference_code, model_code, make_code) {
 
   content <- httr::POST(
     "http://veiculos.fipe.org.br/api/veiculos/ConsultarAnoModelo",
     httr::add_headers(Referer = "http://veiculos.fipe.org.br/"),
     body = list(
       codigoTipoVeiculo = 1,
-      codigoTabelaReferencia = cod_ref,
-      codigoModelo = cod_modelo,
-      codigoMarca = cod_marca
+      codigoTabelaReferencia = reference_code,
+      codigoModelo = model_code,
+      codigoMarca = make_code
     )
   ) %>%
   httr::content("text", encoding = "UTF-8") %>%
@@ -118,41 +119,41 @@ pega_tab_ano <- function(cod_ref, cod_modelo, cod_marca) {
     dplyr::mutate(
       ano = ifelse(ano == "32000", 0L, as.integer(ano))
     ) %>%
-    dplyr::select(ano, cod_ano = Value) %>%
+    dplyr::select(year = ano, year_code = Value) %>%
     tibble::as_tibble()
 }
 
 
-# consulta o ano do modelo disponivel para um determinado mes de referencia, marca e modelo
+# consulta o ano do modelo disponivel para um determinado mes de referencia, make e modelo
 #
-pega_ano <- function(modelo, marca = NULL, ano_filter = NULL, cod_ref) {
+get_year <- function(model, make = NULL, year_filter = NULL, reference_code) {
 
-  #cod_ref_max <- cod_ref[which.max(cod_ref)]
+  #reference_code_max <- reference_code[which.max(reference_code)]
 
-  cod_modelo <- pega_modelo(modelo, marca, cod_ref)
+  model_code <- get_model(model, make, reference_code)
 
-  if (nrow(cod_modelo) == 0) stop("Modelo nao encontrado", call. = FALSE)
+  if (nrow(model_code) == 0) stop("Model not found", call. = FALSE)
 
-  tab_ano <- cod_modelo %>%
-    tidyr::crossing(., cod_ref_range = range(cod_ref)) %>%
+  table_year <- model_code %>%
+    tidyr::crossing(., reference_code_range = range(reference_code)) %>%
     dplyr::mutate(
-      cod_ano = purrr::pmap(
-        list(cod_ref_range, cod_modelo, cod_marca),
-        pega_tab_ano
+      year_code = purrr::pmap(
+        list(reference_code_range, model_code, make_code),
+        get_table_year
       )
     ) %>%
-    dplyr::filter(!purrr::map_lgl(cod_ano, is.null)) %>%
+    dplyr::filter(!purrr::map_lgl(year_code, is.null)) %>%
     tidyr::unnest() %>%
-    dplyr::distinct(cod_modelo, cod_marca, cod_ano, ano)
+    dplyr::distinct(model_code, make_code, year_code, year)
 
-  if (is.null(ano_filter)) {
+  if (is.null(year_filter)) {
 
-    return(tab_ano)
+    return(table_year)
 
   } else {
 
-    tab_ano %>%
-      dplyr::filter(ano %in% ano_filter) %>%
+    table_year %>%
+      dplyr::filter(year %in% year_filter) %>%
       return()
 
   }
@@ -161,18 +162,18 @@ pega_ano <- function(modelo, marca = NULL, ano_filter = NULL, cod_ref) {
 
 # consulta o valor do modelo
 #
-pega_valor <- function(cod_ref, cod_marca, cod_modelo, cod_ano) {
+get_price <- function(reference_code, make_code, model_code, year_code) {
 
-  ano <- as.character(stringr::str_split(cod_ano, "-", simplify = TRUE)[1, 1])
-  combustivel <- as.integer(stringr::str_split(cod_ano, "-", simplify = TRUE)[1, 2])
+  ano <- as.character(stringr::str_split(year_code, "-", simplify = TRUE)[1, 1])
+  combustivel <- as.integer(stringr::str_split(year_code, "-", simplify = TRUE)[1, 2])
 
   content <- httr::POST(
     "http://veiculos.fipe.org.br/api/veiculos/ConsultarValorComTodosParametros",
     httr::add_headers(Referer = "http://veiculos.fipe.org.br/"),
     body = list(
-      codigoTabelaReferencia = cod_ref,
-      codigoMarca = cod_marca,
-      codigoModelo = cod_modelo,
+      codigoTabelaReferencia = reference_code,
+      codigoMarca = make_code,
+      codigoModelo = model_code,
       codigoTipoVeiculo = 1,
       anoModelo = ano,
       codigoTipoCombustivel = combustivel,
@@ -193,17 +194,17 @@ pega_valor <- function(cod_ref, cod_marca, cod_modelo, cod_ano) {
       Valor = readr::parse_number(Valor, locale = readr::locale(decimal_mark = ","))
     ) %>%
     dplyr::select(
-      cod_fipe = CodigoFipe,
-      data_referencia = MesReferencia,
-      marca = Marca,
-      modelo = Modelo,
-      ano = AnoModelo,
-      combustivel = Combustivel,
-      valor = Valor
+      fipe_code = CodigoFipe,
+      date = MesReferencia,
+      make = Marca,
+      model = Modelo,
+      year = AnoModelo,
+      #gas = Combustivel,
+      price = Valor
     )
 }
 
-confere_data <- function(x) {
+check_date <- function(x) {
 
   if (!lubridate::is.Date(x)) {
 
