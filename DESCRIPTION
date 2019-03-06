@@ -3,13 +3,15 @@ Title: Consulta de preços da Tabela FIPE
 Version: 0.0.1
 Authors@R: person("Italo", "Cegatta", email = "italocegatta@gmail.com", role = c("aut", "cre"))
 Description: O pacote fornece uma forma simplificada de acesso aos dados da Tabela Fipe de Carros.
-Depends: R (>= 3.3.0)
-License: MIT
+Depends: 
+    R (>= 3.1)
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-Suggests: knitr,
-    rmarkdown
-VignetteBuilder: knitr
+Suggests: 
+    knitr,
+    rmarkdown,
+    covr
 Imports: 
     httr,
     jsonlite,
@@ -20,5 +22,8 @@ Imports:
     stringr,
     readr,
     magrittr,
-    purrr
+    purrr,
+    furrr,
+    forcats,
+    future
 RoxygenNote: 6.1.1

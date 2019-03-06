@@ -9,7 +9,7 @@
 #' @return Um tibble com resultado da consulta.
 #'
 #' @examples
-#' fipe_vehicle("etios", "toyota", c(2018, 0), c("2019-01-01", "2018-01-01", "2017-01-01"))
+#' fipe_vehicle(model = "etios", make = "toyota", year = 0)
 #'
 #' @export
 #'
