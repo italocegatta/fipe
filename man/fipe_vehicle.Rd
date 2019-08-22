@@ -38,7 +38,7 @@ The Fipe Database shows average prices of vehicles on the national
 }
 \examples{
 library(fipe)
-fipe_vehicle(model = "etios platinum", make = "toyota", date = Sys.Date(), year = c(0, 2019, 2018))
+fipe_vehicle(model = "etios platinum", make = "toyota", date = "2019-08-01", year = c(0, 2019, 2018))
 
 }
 \seealso{
