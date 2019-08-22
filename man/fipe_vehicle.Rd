@@ -2,29 +2,41 @@
 % Please edit documentation in R/fipe.R
 \name{fipe_vehicle}
 \alias{fipe_vehicle}
-\title{Consulta o price do carro disponiveis na Tabela FIPE}
+\title{Access to the Fipe Database}
 \usage{
 fipe_vehicle(model, make = NULL, year = NULL, date = Sys.Date(),
-  .progress = FALSE)
+  progress = FALSE, parallel = FALSE)
 }
 \arguments{
-\item{model}{vetor de caracteres. Nome de um ou mais carros que se deseja consultar.}
+\item{model}{A character vector. Vehicle model name.}
 
-\item{make}{vetor de caracteres. Se NULL, consulta em todas o modelo em todas as marcas, do contrario apenas nas indicadas.}
+\item{make}{A character vector. If NULL, search all models in all makes, otherwise only those indicated.}
 
-\item{year}{vetor numerico. Indica um ou mais anos de fabricacao a serem consultados. price 0 indica carro 0 km.}
+\item{year}{A numeric vector. Year of manufacture of the vehicle. If 0 returns vehicles 0 km.}
 
-\item{date}{vetor de datas. Indica a data de referencia que o price carro foi consultado.}
+\item{date}{A date vector. Reference date for the vehicle price.}
 
-\item{.progress}{a logical, for whether or not to print a progress bar.}
+\item{progress}{A logical, if TRUE print a progress bar.}
+
+\item{parallel}{A logical, if TRUE apply function in parallel.}
 }
 \value{
-Um tibble com resultado da consulta.
+A data frame including model, make, year, date and price.
 }
 \description{
-Consulta o price do carro disponiveis na Tabela FIPE
+Access to the Fipe Database
+}
+\details{
+The Fipe Database shows average prices of vehicles on the national
+  market, functioning only as a parameter for negotiations and evaluations.
+  The prices effectively used in negotiations vary according to region,
+  vehicle's conservation, color, accessories or any other factor that might
+  influence the conditions of demand and supply for a specific vehicle.
+  The year of the vehicle refers to the year of the model and are not
+  considered vehicles for professional or special use. The values are
+  expressed in R$ (reais) of the month/year of reference.
 }
 \examples{
-fipe_vehicle(model = "etios", make = "toyota", year = 0)
+fipe_vehicle(model = "etios", make = "toyota", date = Sys.Date(), year = 0)
 
 }

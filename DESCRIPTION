@@ -1,11 +1,13 @@
 Package: fipe
-Title: Consulta de preços da Tabela FIPE
+Title: Access to Fipe's average prices of vehicles
 Version: 0.0.1
 Authors@R: person("Italo", "Cegatta", email = "italocegatta@gmail.com", role = c("aut", "cre"))
-Description: O pacote fornece uma forma simplificada de acesso aos dados da Tabela Fipe de Carros.
+Description: Access to Fipe's average prices of vehicles on the Brazilian national market.
 Depends: 
-    R (>= 3.1)
+    R (>= 3.5)
 License: MIT + file LICENSE
+URL: https://italocegatta.github.io/fipe
+BugReports: https://github.com/italocegatta/fipe/issues
 Encoding: UTF-8
 LazyData: true
 Suggests: 

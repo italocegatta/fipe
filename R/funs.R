@@ -1,4 +1,5 @@
-# consulta o mes de referencia dos precos disponibilizados e retorna o codigo correspondente
+# consulta o mes de referencia dos precos
+# disponibilizados e retorna o codigo correspondente
 #
 get_reference <-  function(date) {
 
@@ -17,7 +18,8 @@ get_reference <-  function(date) {
 }
 
 
-# retira caracteres especiais e simflifica a grafica para facilitar o match dos nomes
+# retira caracteres especiais e simflifica a grafica para
+# facilitar o match dos nomes
 #
 clean_name <- function(x) {
   x %>%
@@ -26,7 +28,8 @@ clean_name <- function(x) {
 }
 
 
-# consulta as marcas disponiveis para um determinado mes de referencia e retorna o codigo correspondente
+# consulta as marcas disponiveis para um determinado mes
+# de referencia e retorna o codigo correspondente
 #
 get_make <- function(make = NULL, reference_code) {
 
@@ -59,7 +62,8 @@ get_make <- function(make = NULL, reference_code) {
 }
 
 
-# consulta os modelos disponiveis para um determinado mes de referencia e marca e retorna o codigo correspondente
+# consulta os modelos disponiveis para um determinado mes
+# de referencia e marca e retorna o codigo correspondente
 #
 get_model <- function(model, make = NULL, reference_code) {
 
@@ -124,7 +128,8 @@ get_table_year <- function(reference_code, model_code, make_code) {
 }
 
 
-# consulta o ano do modelo disponivel para um determinado mes de referencia, make e modelo
+# consulta o ano do modelo disponivel para um determinado mes
+# de referencia, make e modelo
 #
 get_year <- function(model, make = NULL, year_filter = NULL, reference_code) {
 
@@ -164,8 +169,12 @@ get_year <- function(model, make = NULL, year_filter = NULL, reference_code) {
 #
 get_price <- function(reference_code, make_code, model_code, year_code) {
 
-  ano <- as.character(stringr::str_split(year_code, "-", simplify = TRUE)[1, 1])
-  combustivel <- as.integer(stringr::str_split(year_code, "-", simplify = TRUE)[1, 2])
+  ano <- as.character(
+    stringr::str_split(year_code, "-", simplify = TRUE)[1, 1]
+  )
+  combustivel <- as.integer(
+    stringr::str_split(year_code, "-", simplify = TRUE)[1, 2]
+  )
 
   content <- httr::POST(
     "http://veiculos.fipe.org.br/api/veiculos/ConsultarValorComTodosParametros",
@@ -191,7 +200,9 @@ get_price <- function(reference_code, make_code, model_code, year_code) {
     dplyr::mutate(
       MesReferencia = lubridate::dmy(paste0("01 ", MesReferencia)),
       AnoModelo = ifelse(AnoModelo == "32000", 0L, as.integer(AnoModelo)),
-      Valor = readr::parse_number(Valor, locale = readr::locale(decimal_mark = ","))
+      Valor = readr::parse_number(
+        Valor, locale = readr::locale(decimal_mark = ",")
+      )
     ) %>%
     dplyr::select(
       fipe_code = CodigoFipe,
