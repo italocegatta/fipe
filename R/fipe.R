@@ -21,6 +21,7 @@
 #' @seealso Official Website \url{https://veiculos.fipe.org.br}.
 #'
 #' @examples
+#' library(fipe)
 #' fipe_vehicle(model = "etios platinum", make = "toyota", date = Sys.Date(), year = c(0, 2019, 2018))
 #'
 #' @export

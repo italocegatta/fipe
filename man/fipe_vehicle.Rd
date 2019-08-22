@@ -37,6 +37,7 @@ The Fipe Database shows average prices of vehicles on the national
   expressed in R$ (reais) of the month/year of reference.
 }
 \examples{
+library(fipe)
 fipe_vehicle(model = "etios platinum", make = "toyota", date = Sys.Date(), year = c(0, 2019, 2018))
 
 }
