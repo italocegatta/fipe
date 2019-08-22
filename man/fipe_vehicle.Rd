@@ -8,20 +8,20 @@ fipe_vehicle(model, make = NULL, year = NULL, date = Sys.Date(),
   progress = FALSE, parallel = FALSE)
 }
 \arguments{
-\item{model}{A character vector. Vehicle model name.}
+\item{model}{a character vector. Vehicle model name.}
 
-\item{make}{A character vector. If NULL, search all models in all makes, otherwise only those indicated.}
+\item{make}{a character vector. If NULL, search all models in all makes, otherwise only those indicated.}
 
-\item{year}{A numeric vector. Year of manufacture of the vehicle. If 0 returns vehicles 0 km.}
+\item{year}{a numeric vector. Year of manufacture of the vehicle. If 0 returns vehicles 0 km.}
 
-\item{date}{A date vector. Reference date for the vehicle price.}
+\item{date}{a date vector. Reference date for the vehicle price.}
 
-\item{progress}{A logical, if TRUE print a progress bar.}
+\item{progress}{a logical, if TRUE print a progress bar.}
 
-\item{parallel}{A logical, if TRUE apply function in parallel.}
+\item{parallel}{a logical, if TRUE apply function in parallel.}
 }
 \value{
-A data frame including model, make, year, date and price.
+A data frame/tibble including model, make, year, date and price.
 }
 \description{
 Access to the Fipe Database
@@ -37,6 +37,6 @@ The Fipe Database shows average prices of vehicles on the national
   expressed in R$ (reais) of the month/year of reference.
 }
 \examples{
-fipe_vehicle(model = "etios", make = "toyota", date = Sys.Date(), year = 0)
+fipe_vehicle(model = "etios platinum", make = "toyota", date = Sys.Date(), year = c(0, 2019, 2018))
 
 }
