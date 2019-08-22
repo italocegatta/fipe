@@ -10,13 +10,13 @@ status](https://ci.appveyor.com/api/projects/status/github/italocegatta/fipe?bra
 # fipe
 
 `fipe` is a R package to access [Fipe](https://veiculos.fipe.org.br)’s
-average prices of vehicles on the Brazilian national market. The prices
-effectively used in negotiations vary according to region, vehicle’s
-conservation, color, accessories or any other factor that might
-influence the conditions of demand and supply for a specific vehicle.
-The year of the vehicle refers to the year of the model and are not
-considered vehicles for professional or special use. The values are
-expressed in R$ (reais) of the month/year of reference.
+average purchase price of vehicles in the Brazilian national market. The
+prices are effectively used in purchase negotiations according to
+region, vehicle’s conservation, color, accessories or any other factor
+that might influence the demand and supply for a specific vehicle. The
+year of the vehicle refers to the model year, and the vehicles are not
+considered for professional or special use. The values are expressed in
+R$ (reais) for each month/year of reference.
 
 ## Installation
 
@@ -35,8 +35,8 @@ install.packages("fipe")
 
 ## Example
 
-The function `fipe_vehicle` provide acces to historial data of brazilian
-cars
+The function `fipe_vehicle` provide access to historical data of
+brazilian cars price
 
 ``` r
 library(fipe)

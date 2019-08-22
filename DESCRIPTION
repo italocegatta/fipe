@@ -1,8 +1,8 @@
 Package: fipe
-Title: Access to Fipe's average prices of vehicles
+Title: Access to Fipe's average purchase price of vehicles
 Version: 0.0.1
 Authors@R: person("Italo", "Cegatta", email = "italocegatta@gmail.com", role = c("aut", "cre"))
-Description: Access to Fipe's average prices of vehicles on the Brazilian national market.
+Description: Access to Fipe's average purchase price of vehicles in the Brazilian national market.
 Depends: 
     R (>= 3.5)
 License: MIT + file LICENSE

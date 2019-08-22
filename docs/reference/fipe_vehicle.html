@@ -117,11 +117,13 @@
     </tr>
     <tr>
       <th>make</th>
-      <td><p>a character vector. If NULL, search all models in all makes, otherwise only those indicated.</p></td>
+      <td><p>a character vector. If NULL, search all models in all makes,
+otherwise only those indicated.</p></td>
     </tr>
     <tr>
       <th>year</th>
-      <td><p>a numeric vector. Year of manufacture of the vehicle. If 0 returns vehicles 0 km.</p></td>
+      <td><p>a numeric vector. Year of manufacture of the vehicle. If 0
+returns vehicles 0 km.</p></td>
     </tr>
     <tr>
       <th>date</th>
@@ -143,14 +145,13 @@
     
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>The Fipe Database shows average prices of vehicles on the national
-  market, functioning only as a parameter for negotiations and evaluations.
-  The prices effectively used in negotiations vary according to region,
-  vehicle's conservation, color, accessories or any other factor that might
-  influence the conditions of demand and supply for a specific vehicle.
-  The year of the vehicle refers to the year of the model and are not
-  considered vehicles for professional or special use. The values are
-  expressed in R$ (reais) of the month/year of reference.</p>
+    <p>The Fipe Database shows the average purchase price of vehicles in
+  the Brazilian national market. The prices are effectively used in purchase
+  negotiations according to region, vehicle’s conservation, color,
+  accessories or any other factor that might influence the demand and supply
+  for a specific vehicle. The year of the vehicle refers to the model year,
+  and the vehicles are not considered for professional or special use. The
+  values are expressed in R$ (reais) for each month/year of reference.</p>
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
@@ -158,7 +159,10 @@
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>fipe_vehicle</span>(<span class='kw'>model</span> <span class='kw'>=</span> <span class='st'>"etios platinum"</span>, <span class='kw'>make</span> <span class='kw'>=</span> <span class='st'>"toyota"</span>, <span class='kw'>date</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/Sys.time'>Sys.Date</a></span>(), <span class='kw'>year</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>0</span>, <span class='fl'>2019</span>, <span class='fl'>2018</span>))</div><div class='output co'>#&gt; <span style='color: #555555;'># A tibble: 6 x 5</span><span>
+    <pre class="examples"><div class='input'><span class='fu'>fipe_vehicle</span>(
+  <span class='kw'>model</span> <span class='kw'>=</span> <span class='st'>"etios platinum"</span>, <span class='kw'>make</span> <span class='kw'>=</span> <span class='st'>"toyota"</span>,
+  <span class='kw'>date</span> <span class='kw'>=</span> <span class='st'>"2019-08-01"</span>, <span class='kw'>year</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>0</span>, <span class='fl'>2019</span>, <span class='fl'>2018</span>)
+)</div><div class='output co'>#&gt; <span style='color: #555555;'># A tibble: 6 x 5</span><span>
 #&gt;   model                                    make   year  date       price
 #&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>                                    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>  </span><span style='color: #555555;font-style: italic;'>&lt;fct&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;date&gt;</span><span>     </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
 #&gt; </span><span style='color: #555555;'>1</span><span> ETIOS PLATINUM 1.5 Flex 16V 4p Aut.      Toyota 0 km  2019-08-01 </span><span style='text-decoration: underline;'>63</span><span>127
@@ -166,8 +170,8 @@
 #&gt; </span><span style='color: #555555;'>3</span><span> ETIOS PLATINUM 1.5 Flex 16V 4p Aut.      Toyota 2018  2019-08-01 </span><span style='text-decoration: underline;'>54</span><span>512
 #&gt; </span><span style='color: #555555;'>4</span><span> ETIOS PLATINUM Sed. 1.5 Flex 16V 4p Aut. Toyota 0 km  2019-08-01 </span><span style='text-decoration: underline;'>66</span><span>080
 #&gt; </span><span style='color: #555555;'>5</span><span> ETIOS PLATINUM Sed. 1.5 Flex 16V 4p Aut. Toyota 2019  2019-08-01 </span><span style='text-decoration: underline;'>59</span><span>610
-#&gt; </span><span style='color: #555555;'>6</span><span> ETIOS PLATINUM Sed. 1.5 Flex 16V 4p Aut. Toyota 2018  2019-08-01 </span><span style='text-decoration: underline;'>55</span><span>736</div><div class='input'>
-</div></span></pre>
+#&gt; </span><span style='color: #555555;'>6</span><span> ETIOS PLATINUM Sed. 1.5 Flex 16V 4p Aut. Toyota 2018  2019-08-01 </span><span style='text-decoration: underline;'>55</span><span>736</div></span><div class='input'>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
