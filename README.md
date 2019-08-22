@@ -1,14 +1,24 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-[![Travis build status](https://travis-ci.org/italocegatta/fipe.svg?branch=master)](https://travis-ci.org/italocegatta/fipe) [![AppVeyor build status](https://ci.appveyor.com/api/projects/status/github/italocegatta/fipe?branch=master&svg=true)](https://ci.appveyor.com/project/italocegatta/fipe) [![Codecov test coverage](https://codecov.io/gh/italocegatta/fipe/branch/master/graph/badge.svg)](https://codecov.io/gh/italocegatta/fipe?branch=master)
 
-fipe
-====
+[![Travis build
+status](https://travis-ci.org/italocegatta/fipe.svg?branch=master)](https://travis-ci.org/italocegatta/fipe)
+[![AppVeyor build
+status](https://ci.appveyor.com/api/projects/status/github/italocegatta/fipe?branch=master&svg=true)](https://ci.appveyor.com/project/italocegatta/fipe)
+[![CRAN\_Release\_Badge](http://www.r-pkg.org/badges/version-ago/fipe)](https://CRAN.R-project.org/package=fipe)
 
-O objetivo do pacote `fipe` é facilitar o acesso aos preços médios de veículos no mercado brasileiro disponilizados pela Fundação Instituto de Pesquisas Econômicas (Fipe) atravez da Tabela Fipe. Os valores servem apenas como um parâmetro para negociações ou avaliações. Os preços efetivamente praticados variam em função da região, conservação, cor, acessórios ou qualquer outro fator que possa influenciar as condições de oferta e procura por um veículo específico. O ano do veículo refere-se ao ano do modelo e não são considerados veículos para uso profissional ou especial. Os valores são expressos em R$ (reais) do mês/ano de referência.
+# fipe
 
-Installation
-------------
+`fipe` is a R package to access [Fipe](https://veiculos.fipe.org.br)’s
+average prices of vehicles on the Brazilian national market. The prices
+effectively used in negotiations vary according to region, vehicle’s
+conservation, color, accessories or any other factor that might
+influence the conditions of demand and supply for a specific vehicle.
+The year of the vehicle refers to the year of the model and are not
+considered vehicles for professional or special use. The values are
+expressed in R$ (reais) of the month/year of reference.
+
+## Installation
 
 You can install the development version from github:
 
@@ -23,10 +33,10 @@ The stable version is availabe on [CRAN](https://CRAN.R-project.org)
 install.packages("fipe")
 ```
 
-Example
--------
+## Example
 
-The function `fipe_vehicle` provide acces to historial data of brazilian cars
+The function `fipe_vehicle` provide acces to historial data of brazilian
+cars
 
 ``` r
 library(fipe)

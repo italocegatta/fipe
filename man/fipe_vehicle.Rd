@@ -40,3 +40,6 @@ The Fipe Database shows average prices of vehicles on the national
 fipe_vehicle(model = "etios platinum", make = "toyota", date = Sys.Date(), year = c(0, 2019, 2018))
 
 }
+\seealso{
+Official Website \url{https://veiculos.fipe.org.br}.
+}
