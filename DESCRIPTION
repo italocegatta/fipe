@@ -1,12 +1,17 @@
 Package: fipe
-Title: Access to Fipe's Average Purchase Price of Vehicles
+Title: Access to Average Purchase Price of Vehicles in Brazil
 Version: 0.0.1
 Authors@R: person("Italo", "Cegatta", email = "italocegatta@gmail.com", role = c("aut", "cre"))
-Description: Access to Fipe's average purchase price of vehicles in the Brazilian national market.
+Description: The Brazilian vehicle purchase pricing table is provided by 
+  the Institute of Economic Research Foundation (Fipe) and used in purchase 
+  negotiations according to region, vehicle’s conservation, color, accessories 
+  or any other factor that might influence the demand and supply for a specific 
+  vehicle. For more on the data themselves and web access, please see 
+  <https://www.fipe.org.br/en-us/home/>.
 Depends: 
     R (>= 3.5)
 License: MIT + file LICENSE
-URL: https://italocegatta.github.io/fipe
+URL: https://italocegatta.github.io/fipe/
 BugReports: https://github.com/italocegatta/fipe/issues
 Encoding: UTF-8
 LazyData: true

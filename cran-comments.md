@@ -1,10 +1,5 @@
-## Test environments
-* local OS X install, R 3.5.3
-* ubuntu 14.04 (on travis-ci), R 3.5.3
-* win-builder (devel and release)
+## Resubmission
+This is a resubmission. In this version I have:
 
-## R CMD check results
-
-0 errors | 0 warnings | 1 note
-
-* This is a new release.
+* Changed the title in DESCRIPTION to be more clear.
+* Changed the description field in DESCRIPTION to remove "This package", package name, title or similar in the beginning, and added a link to references the methods.
