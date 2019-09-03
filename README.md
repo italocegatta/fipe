@@ -6,6 +6,7 @@ status](https://travis-ci.org/italocegatta/fipe.svg?branch=master)](https://trav
 [![AppVeyor build
 status](https://ci.appveyor.com/api/projects/status/github/italocegatta/fipe?branch=master&svg=true)](https://ci.appveyor.com/project/italocegatta/fipe)
 [![CRAN\_Release\_Badge](http://www.r-pkg.org/badges/version-ago/fipe)](https://CRAN.R-project.org/package=fipe)
+[![CRAN\_Download\_Badge](http://cranlogs.r-pkg.org/badges/fipe)](https://CRAN.R-project.org/package=fipe)
 
 # fipe
 
